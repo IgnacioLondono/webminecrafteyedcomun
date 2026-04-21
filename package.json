@@ -1,0 +1,10 @@
+{
+  "name": "minecraft-control-panel",
+  "version": "1.0.0",
+  "description": "Panel web local para gestionar un servidor de Minecraft",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}

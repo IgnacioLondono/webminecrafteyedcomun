@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="gradient-bg" aria-hidden="true">
+    <div class="gradients-container">
+      <div class="g g1"></div>
+      <div class="g g2"></div>
+      <div class="g g3"></div>
+      <div class="g g4"></div>
+      <div class="g g5"></div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand-block">
+      <h1>plusultramc</h1>
+    </div>
+    <div class="topbar-actions">
+      <button id="refreshAllBtn" class="btn ghost">Refrescar todo</button>
+      <button id="runDiagBtn" class="btn accent">Diagnostico</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="sidebar card">
+      <nav class="screen-nav" id="screenNav">
+        <button data-screen="dashboard" class="screen-btn active">Dashboard</button>
+        <button data-screen="operations" class="screen-btn">Operaciones</button>
+        <button data-screen="players" class="screen-btn">Jugadores</button>
+        <button data-screen="console" class="screen-btn">Consola RCON</button>
+        <button data-screen="portainer" class="screen-btn">Portainer</button>
+        <button data-screen="files" class="screen-btn">Archivos</button>
+        <button data-screen="logs" class="screen-btn">Logs</button>
+        <button data-screen="settings" class="screen-btn">Ajustes</button>
+      </nav>
+    </aside>
+
+    <section class="screen-area">
+      <section id="screen-dashboard" class="screen active">
+        <div class="hero card">
+          <div>
+            <span class="kicker">Estado General</span>
+            <h2 id="heroTitle">Conectando con tu infraestructura...</h2>
+            <p id="heroSubtitle">Comprobando Minecraft, RCON y contenedor.</p>
+            <div class="hero-cta">
+              <button id="startBtn" class="btn accent">Encender</button>
+              <button id="stopBtn" class="btn warn">Apagar</button>
+              <button id="restartBtn" class="btn ghost">Reiniciar</button>
+            </div>
+          </div>
+          <div class="metrics-grid">
+            <article class="metric"><span>Minecraft</span><strong id="mcStatus">-</strong></article>
+            <article class="metric"><span>Jugadores</span><strong id="playersMetric">-</strong></article>
+            <article class="metric"><span>Contenedor</span><strong id="containerMetric">-</strong></article>
+            <article class="metric"><span>Modo</span><strong id="modeMetric">-</strong></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-operations" class="screen">
+        <div class="screen-grid two">
+          <article class="card">
+            <h3>Control del servidor</h3>
+            <p class="muted">Usa Portainer o control local segun tu config.</p>
+            <div class="button-stack">
+              <button id="opStartBtn" class="btn accent">Start</button>
+              <button id="opStopBtn" class="btn warn">Stop</button>
+              <button id="opRestartBtn" class="btn ghost">Restart</button>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Estado actual</h3>
+            <ul id="opStatusList" class="simple-list"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="screen-players" class="screen">
+        <article class="card">
+          <div class="card-head">
+            <h3>Jugadores conectados</h3>
+            <button id="refreshPlayersBtn" class="btn ghost">Actualizar</button>
+          </div>
+          <ul id="playersList" class="entity-list"></ul>
+        </article>
+      </section>
+
+      <section id="screen-console" class="screen">
+        <article class="card">
+          <h3>Consola RCON</h3>
+          <div class="input-row">
+            <input id="commandInput" class="form-control" placeholder="Ej: whitelist add Steve" />
+            <button id="sendCommandBtn" class="btn accent">Enviar</button>
+          </div>
+          <pre id="commandOutput" class="panel-output">Sin comandos ejecutados.</pre>
+        </article>
+      </section>
+
+      <section id="screen-portainer" class="screen">
+        <div class="screen-grid two">
+          <article class="card">
+            <div class="card-head">
+              <h3>Contenedor Minecraft</h3>
+              <button id="refreshPortainerBtn" class="btn ghost">Actualizar</button>
+            </div>
+            <ul id="portainerStatusList" class="simple-list"></ul>
+          </article>
+          <article class="card">
+            <h3>Acciones Portainer</h3>
+            <div class="button-stack">
+              <button data-portainer-action="start" class="btn accent portainer-action-btn">Start Container</button>
+              <button data-portainer-action="stop" class="btn warn portainer-action-btn">Stop Container</button>
+              <button data-portainer-action="restart" class="btn ghost portainer-action-btn">Restart Container</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="screen-files" class="screen">
+        <article class="card">
+          <div class="card-head">
+            <h3>Explorador de archivos</h3>
+            <div class="inline-actions">
+              <button id="folderUpBtn" class="btn ghost">Subir</button>
+              <span id="currentPath" class="path-pill">.</span>
+            </div>
+          </div>
+          <div class="upload-row">
+            <input id="uploadFileInput" type="file" class="form-control file-input" />
+            <label class="upload-overwrite">
+              <input id="uploadOverwrite" type="checkbox" />
+              <span>Overwrite</span>
+            </label>
+            <button id="uploadFileBtn" class="btn accent">Subir archivo</button>
+          </div>
+          <ul id="folderList" class="entity-list"></ul>
+        </article>
+      </section>
+
+      <section id="screen-logs" class="screen">
+        <article class="card">
+          <div class="card-head">
+            <h3>Logs del servidor</h3>
+            <button id="refreshLogsBtn" class="btn ghost">Actualizar</button>
+          </div>
+          <pre id="logsOutput" class="panel-output large">Cargando logs...</pre>
+        </article>
+      </section>
+
+      <section id="screen-settings" class="screen">
+        <div class="screen-grid two">
+          <article class="card">
+            <h3>Configuracion activa</h3>
+            <pre id="configOutput" class="panel-output">Cargando configuracion...</pre>
+          </article>
+          <article class="card">
+            <h3>Diagnostico</h3>
+            <pre id="diagOutput" class="panel-output">Pulsa "Diagnostico" para validar conexiones.</pre>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
