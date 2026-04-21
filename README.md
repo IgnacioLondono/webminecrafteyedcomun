@@ -47,13 +47,28 @@ En Portainer:
 
 El panel usa la API Docker proxy de Portainer para start/stop/restart.
 
-## 4) Ejecutar
+## 4) Ejecutar local
 
 ```bash
 npm start
 ```
 
-Abre `http://localhost:3000`.
+Abre `http://localhost:3090`.
+
+## 5) Despliegue en Portainer via Git Repository
+
+Usa la opcion **Repository** en Stacks con estos valores:
+
+- Repository URL: `https://github.com/IgnacioLondono/webminecrafteyedcomun.git`
+- Repository reference: `refs/heads/main`
+- Compose path: `docker-compose.yml`
+
+Variables minimas a definir en Portainer:
+
+- `RCON_PASSWORD`
+- `PORTAINER_API_KEY`
+
+Referencia completa: `PORTAINER-DEPLOY.md` y `stack.env.sample`.
 
 ## Seguridad
 

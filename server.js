@@ -42,14 +42,116 @@ function deepMerge(base, patch) {
   return out;
 }
 
-function loadConfig() {
-  const fallback = JSON.parse(fs.readFileSync(SAMPLE_CONFIG_PATH, 'utf-8'));
-  if (!fs.existsSync(CONFIG_PATH)) {
+function parseBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === '') {
     return fallback;
   }
 
-  const userConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
-  return deepMerge(fallback, userConfig);
+  const normalized = String(value).trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+  if (['0', 'false', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+  return fallback;
+}
+
+function parseNumber(value, fallback) {
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+
+  const num = Number(value);
+  return Number.isFinite(num) ? num : fallback;
+}
+
+function getEnvConfig() {
+  return {
+    port: parseNumber(process.env.PANEL_PORT, undefined),
+    controlMode: process.env.PANEL_CONTROL_MODE || undefined,
+    minecraft: {
+      host: process.env.MC_HOST || undefined,
+      port: parseNumber(process.env.MC_PORT, undefined),
+      protocolVersion: parseNumber(process.env.MC_PROTOCOL_VERSION, undefined),
+      timeoutMs: parseNumber(process.env.MC_TIMEOUT_MS, undefined),
+    },
+    rcon: {
+      enabled: parseBoolean(process.env.RCON_ENABLED, undefined),
+      host: process.env.RCON_HOST || undefined,
+      port: parseNumber(process.env.RCON_PORT, undefined),
+      password: process.env.RCON_PASSWORD || undefined,
+      timeoutMs: parseNumber(process.env.RCON_TIMEOUT_MS, undefined),
+    },
+    portainer: {
+      enabled: parseBoolean(process.env.PORTAINER_ENABLED, undefined),
+      baseUrl: process.env.PORTAINER_BASE_URL || undefined,
+      authType: process.env.PORTAINER_AUTH_TYPE || undefined,
+      apiKey: process.env.PORTAINER_API_KEY || undefined,
+      bearerToken: process.env.PORTAINER_BEARER_TOKEN || undefined,
+      endpointId: process.env.PORTAINER_ENDPOINT_ID || undefined,
+      containerId: process.env.PORTAINER_CONTAINER_ID || undefined,
+      timeoutMs: parseNumber(process.env.PORTAINER_TIMEOUT_MS, undefined),
+    },
+    localControl: {
+      enabled: parseBoolean(process.env.LOCAL_CONTROL_ENABLED, undefined),
+      serverDirectory: process.env.LOCAL_SERVER_DIRECTORY || undefined,
+      startupCommand: process.env.LOCAL_STARTUP_COMMAND || undefined,
+    },
+    files: {
+      enabled: parseBoolean(process.env.FILES_ENABLED, undefined),
+      rootDirectory: process.env.FILES_ROOT_DIRECTORY || undefined,
+      logsPath: process.env.FILES_LOGS_PATH || undefined,
+    },
+  };
+}
+
+function pruneUndefinedDeep(value) {
+  if (Array.isArray(value)) {
+    return value.map(pruneUndefinedDeep);
+  }
+
+  if (value && typeof value === 'object') {
+    const out = {};
+    Object.keys(value).forEach((key) => {
+      const child = pruneUndefinedDeep(value[key]);
+      if (child !== undefined) {
+        out[key] = child;
+      }
+    });
+    return Object.keys(out).length ? out : undefined;
+  }
+
+  return value === undefined ? undefined : value;
+}
+
+function loadConfig() {
+  let fallback = {};
+  if (fs.existsSync(SAMPLE_CONFIG_PATH)) {
+    fallback = JSON.parse(fs.readFileSync(SAMPLE_CONFIG_PATH, 'utf-8'));
+  }
+
+  let merged = fallback;
+  if (fs.existsSync(CONFIG_PATH)) {
+    const userConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
+    merged = deepMerge(merged, userConfig);
+  }
+
+  if (process.env.PANEL_CONFIG_JSON) {
+    try {
+      const jsonConfig = JSON.parse(process.env.PANEL_CONFIG_JSON);
+      merged = deepMerge(merged, jsonConfig);
+    } catch (err) {
+      console.error('PANEL_CONFIG_JSON invalido:', err.message);
+    }
+  }
+
+  const envConfig = pruneUndefinedDeep(getEnvConfig());
+  if (envConfig) {
+    merged = deepMerge(merged, envConfig);
+  }
+
+  return merged;
 }
 
 function json(res, statusCode, data) {

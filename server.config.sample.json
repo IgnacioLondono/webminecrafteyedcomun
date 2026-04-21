@@ -1,0 +1,35 @@
+{
+  "port": 3090,
+  "controlMode": "portainer",
+  "minecraft": {
+    "host": "192.168.50.197",
+    "port": 25565,
+    "protocolVersion": 767,
+    "timeoutMs": 5000
+  },
+  "rcon": {
+    "enabled": true,
+    "host": "192.168.50.197",
+    "port": 25575,
+    "password": "CHANGE_ME",
+    "timeoutMs": 5000
+  },
+  "portainer": {
+    "enabled": true,
+    "baseUrl": "http://192.168.50.197:9000",
+    "authType": "apiKey",
+    "apiKey": "CHANGE_ME",
+    "bearerToken": "",
+    "endpointId": "1",
+    "containerId": "EyedComun-Pruebas",
+    "timeoutMs": 8000
+  },
+  "localControl": {
+    "enabled": false
+  },
+  "files": {
+    "enabled": false,
+    "rootDirectory": "/minecraftpruebas/data",
+    "logsPath": "/minecraftpruebas/data/logs/latest.log"
+  }
+}

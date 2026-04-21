@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  plusultramc-panel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: plusultramc-panel
+    restart: unless-stopped
+    ports:
+      - "${PANEL_PORT:-3090}:${PANEL_PORT:-3090}"
+    environment:
+      PANEL_PORT: "${PANEL_PORT:-3090}"
+      PANEL_CONTROL_MODE: "${PANEL_CONTROL_MODE:-portainer}"
+
+      MC_HOST: "${MC_HOST:-192.168.50.197}"
+      MC_PORT: "${MC_PORT:-25565}"
+      MC_PROTOCOL_VERSION: "${MC_PROTOCOL_VERSION:-767}"
+      MC_TIMEOUT_MS: "${MC_TIMEOUT_MS:-5000}"
+
+      RCON_ENABLED: "${RCON_ENABLED:-true}"
+      RCON_HOST: "${RCON_HOST:-192.168.50.197}"
+      RCON_PORT: "${RCON_PORT:-25575}"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+      RCON_TIMEOUT_MS: "${RCON_TIMEOUT_MS:-5000}"
+
+      PORTAINER_ENABLED: "${PORTAINER_ENABLED:-true}"
+      PORTAINER_BASE_URL: "${PORTAINER_BASE_URL:-http://192.168.50.197:9000}"
+      PORTAINER_AUTH_TYPE: "${PORTAINER_AUTH_TYPE:-apiKey}"
+      PORTAINER_API_KEY: "${PORTAINER_API_KEY}"
+      PORTAINER_BEARER_TOKEN: "${PORTAINER_BEARER_TOKEN:-}"
+      PORTAINER_ENDPOINT_ID: "${PORTAINER_ENDPOINT_ID:-1}"
+      PORTAINER_CONTAINER_ID: "${PORTAINER_CONTAINER_ID:-EyedComun-Pruebas}"
+      PORTAINER_TIMEOUT_MS: "${PORTAINER_TIMEOUT_MS:-8000}"
+
+      FILES_ENABLED: "${FILES_ENABLED:-false}"
+      FILES_ROOT_DIRECTORY: "${FILES_ROOT_DIRECTORY:-/minecraftpruebas/data}"
+      FILES_LOGS_PATH: "${FILES_LOGS_PATH:-/minecraftpruebas/data/logs/latest.log}"
+
+      LOCAL_CONTROL_ENABLED: "false"
+
+    # Mount only if this path exists in your host/server.
+    volumes:
+      - /minecraftpruebas/data:/minecraftpruebas/data
